@@ -135,7 +135,7 @@ Client.on('message', async message => {
   
   Client.on('message', async message => {
   
-    let blacklisted = ["fdp", 'connard', 'ntm', 'va te faire' , ' va te faire foutre', 'enculé', 'encule', 'nique ta race'];
+    let blacklisted = ["fdp", 'connard', 'ntm', 'va te faire' , ' va te faire foutre', 'enculé', 'encule', 'nique ta race', 'nique'];
   
     let foundInText = false;
     for (var i in blacklisted) {
