@@ -176,4 +176,19 @@ Client.on("message", message => {
     }
 });
 
+Client.on("message", message => {
+    if(message.author.bot) return;
+    if(message.content.startsWith(prefix + "help")){
+
+        var embed = new Discord.MessageEmbed()
+            .setColor("#46b1ec")
+            .setTitle("** Deku **")
+            .setDescription("** Voici le menu d'aide que je peux t'apporter **\n\n ** Commande de modération **\n\n **+clear** : pour supprimer un certain nombre de message (max: 99 message).\n\n **+kick** : pour kick un membre du serveur.\n\n **+ban** : pour bannir un membre du serveur.\n\n **+mute** : pour rendre muet un membre du serveur.\n\n **+unmute ** : pour permattre à un membre muet de pourvoir à nouveau parler. \n\n **+tempmute** : rend muet un membre pendant un certain temps (en minute). \n\n ** Commande un peu plus fun** \n\n ** +stat ** : donne ton id. \n\n **+ping** : repond pong. \n\n **+avatar** : met ton avatar en plus grand. \n\n ** +server** : donne des renseignement sur le serveur.\n ")
+            .setThumbnail("https://i.pinimg.com/originals/df/fb/58/dffb58f131703a3471248f4e164f1836.gif")
+            .setTimestamp()
+        message.channel.send(embed);
+
+    }
+});
+
 Client.login(process.env.TOKEN)
