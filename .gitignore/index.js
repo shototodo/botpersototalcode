@@ -8,6 +8,10 @@ Client.on("ready", async () =>{
     console.log("Le bot est ON")
 });
 
+Client.on("guildMemberAdd", member => {
+    member.guild.channels.cache.find(channel => channel.id === "793925973220786186").send("Bienvenue à <@" + member.id + "> qui vient de rejoindre Twitter !")
+});
+
 Client.on("message", message => {
     if(message.author.bot) return;
     if(message.channel.type == "dm") return;
