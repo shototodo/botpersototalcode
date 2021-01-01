@@ -82,7 +82,7 @@ Client.on ("message", message => {
                 message.reply("Membre non ou mal mentionné.");
             }
             else{
-                mention.roles.add("790979314144903238");
+                mention.roles.add("794512902928203796");
                 message.reply(mention.displayName + " mute avec succès.");
             }
         }
@@ -94,7 +94,7 @@ Client.on ("message", message => {
                 message.reply("Membre non ou mal mentionné.");
             }
             else{
-                mention.roles.remove("790979314144903238");
+                mention.roles.remove("794512902928203796");
                 message.reply(mention.displayName + " unmute avec succès.");
             }
         }
@@ -108,9 +108,9 @@ Client.on ("message", message => {
             else{
                 let args = message.content.split(" ");
 
-                mention.roles.add("790979314144903238");
+                mention.roles.add("794512902928203796");
                 setTimeout(function() {
-                    mention.roles.remove("790979314144903238");
+                    mention.roles.remove("794512902928203796");
                     message.channel.send("<@" + mention.id + "> Tu peux désormais de nouveau parler !");
                 }, args[2] * 1000 * 60)
             }
