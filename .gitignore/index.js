@@ -121,6 +121,7 @@ Client.on ("message", message => {
 
 Client.on('message', async message => {
     if(message.author.id === "792794276550803476")return;
+    if(message.author.id === "783071972446961734")return;
 
     let blacklisted = ['https://', 'http://', 'discord.gg',];
   
