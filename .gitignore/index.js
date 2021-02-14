@@ -1,199 +1,290 @@
 const Discord = require('discord.js');
-
-const prefix = "+"
-
+const token = require("./token.json");
+const prefix = "+";
 const Client = new Discord.Client();
+const bdd = require("./bdd.json");
+const fs = require("fs");
 
-Client.on("ready", async () =>{
+// Commande de statut//
+Client.on("ready", async () => {
     console.log("Le bot est ON")
+    Client.user.setStatus("dnd")
+    setTimeout(() => {
+        Client.user.setActivity("Regarde " + Client.guilds.cache.size + " serveurs");
+    }, 100);
 });
 
+// Bienvenue // BDD ATTENTION
 Client.on("guildMemberAdd", member => {
-    member.guild.channels.cache.find(channel => channel.id === "793925973220786186").send("Bienvenue à <@" + member.id + "> qui vient de rejoindre Twitter !")
+    Client.channels.cache.get('808685109652750406').send(`Bienvenue à ${member.user.username} sur ${member.guild} !`)
+    member.roles.add('808669926717915166');
 });
 
+// Commande  de clear //
 Client.on("message", message => {
-    if(message.author.bot) return;
-    if(message.channel.type == "dm") return;
 
-    if(message.content === prefix + "ping"){
-        message.channel.send("Pong.");
-    };
+    if (message.content.startsWith(`${prefix}clear`)) {
+        message.delete();
+        if (message.member.hasPermission('MANAGE_CHANNELS')) {
 
-    if(message.content === prefix + "stat"){
-        message.channel.send(message.author.username + " qui a pour identifiant :" + message.author.id + " a posté un message");
-    }
+            let args = message.content.trim().split(/ +/g);
 
-    else if (message.content === prefix + "server"){
-        message.channel.send("Nom du serveur : " + message.guild.name + "\nNombre d'utilisateurs : " + message.guild.memberCount);
-    }
+            if (args[1]) {
+                if (!isNaN(args[1]) && args[1] >= 1 && args[1] <= 99) {
 
-    else if (message.content === prefix + "avatar"){
-        message.channel.send(`Votre avatar est : ${message.author.displayAvatarURL({ format: 'png'})}`)
-    }
-});
+                    message.channel.bulkDelete(args[1])
+                    message.channel.send(`Vous a supprimé ${args[1]} messages`).then(m => m.delete({ timeout: 1000 }));
 
-Client.on ("message", message => {
-    if(message.author.bot) return;
-    if(message.channel.type == "dm")return;
-
-    if(message.member.hasPermission("BAN_MEMBERS")){
-        if (message.content.startsWith(prefix + "ban")){
-            let mention = message.mentions.members.first();
-
-            if(mention == undefined){
-                message.reply("Membre non ou mal mentionné.");
-            }
-            else {
-                if(mention.bannable){
-                    mention.ban();
-                    message.channel.send(mention.displayName + " a été banni avec succès. ")
-                }
-                else{
-                    message.reply("Impossible de bannir ce membre.");
-                }
-            }
-        }
-    }
-    if(message.member.hasPermission("KICK_MEMBERS")){
-        if (message.content.startsWith(prefix + "kick")){
-            let mention = message.mentions.members.first();
-
-            if(mention == undefined){
-                message.reply("Membre non ou mal mentionné.");
-            }
-            else {
-                if (mention.kickable){
-                    mention.kick();
-                    message.channel.send(mention.displayName + " a été kick avec succès.");
-                    console.log(" il a été kick ma gueule ")
                 }
                 else {
-                    message.reply("Impossible de kick ce membre.");
+                    message.channel.send(`Vous devez indiquer une valeur entre 1 et 99 !`).then(m => m.delete({ timeout: 1000 }));
+
                 }
             }
-        }
-    }
-    if(message.member.hasPermission("MANAGE_MESSAGES")){
-        if (message.content.startsWith(prefix + "mute")){
-            let mention = message.mentions.members.first();
+            else {
+                message.channel.send(`Vous devez indiquer un nombre de message à supprimer`).then(m => m.delete({ timeout: 1000 }));
 
-            if(mention == undefined){
-                message.reply("Membre non ou mal mentionné.");
-            }
-            else{
-                mention.roles.add("794512902928203796");
-                message.reply(mention.displayName + " mute avec succès.");
             }
         }
-        
-        if (message.content.startsWith(prefix + "unmute")){
-            let mention = message.mentions.members.first();
-
-            if(mention == undefined){
-                message.reply("Membre non ou mal mentionné.");
-            }
-            else{
-                mention.roles.remove("794512902928203796");
-                message.reply(mention.displayName + " unmute avec succès.");
-            }
-        }
-        
-        if (message.content.startsWith(prefix + "tempmute")){
-            let mention = message.mentions.members.first();
-
-            if(mention == undefined){
-                message.reply("Membre non ou mal mentionné.");
-            }
-            else{
-                let args = message.content.split(" ");
-
-                mention.roles.add("794512902928203796");
-                setTimeout(function() {
-                    mention.roles.remove("794512902928203796");
-                    message.channel.send("<@" + mention.id + "> Tu peux désormais de nouveau parler !");
-                }, args[2] * 1000 * 60)
-            }
+        else {
+            message.channel.send(`vous devez avoir la permission pour éxécuter cette commande`).then(m => m.delete({ timeout: 1000 }));
         }
     }
 });
 
-
-Client.on('message', async message => {
-    if(message.author.id === "792794276550803476")return;
-    if(message.author.id === "783071972446961734")return;
-
-    let blacklisted = ['discord.gg'];
-  
-    let foundInText = false;
-    for (var i in blacklisted) {
-        if (message.content.toLowerCase().includes(blacklisted[i].toLowerCase())) foundInText = true;
-    }
-    
-    if (foundInText) {
-        message.delete();
-        message.channel.send(new Discord.MessageEmbed()
-      .setDescription(':no_entry: Les liens sont interdits dans ce serveur !!')
-      .setColor(`#ff0000`))
-    }
-  });
-  
-  Client.on('message', async message => {
-  
-    let blacklisted = ["fdp", 'connard', 'ntm', 'va te faire' , ' va te faire foutre', 'enculé', 'encule', 'nique ta race', 'nique'];
-  
-    let foundInText = false;
-    for (var i in blacklisted) {
-        if (message.content.toLowerCase().includes(blacklisted[i].toLowerCase())) foundInText = true;
-    }
-    
-    if (foundInText) {
-        message.delete();
-        message.channel.send(new Discord.MessageEmbed()
-      .setDescription(':no_entry: Les insultes sont interdits dans ce serveur !!')
-      .setColor(`#ff0000`))
-    }
-}); 
-  
+// Commande de Warn et de Unwarn //
 Client.on("message", message => {
-    if(message.member.permissions.has("MANAGE_MESSAGES")){
-        if(message.content.startsWith(prefix + "clear")){
-            let args = message.content.split(" ");
-            
-            if(args[1] == undefined){
-                message.reply(" Nombre de message non ou mal défini.");
+    if (message.content.startsWith(`${prefix}warn`)) {
+        if (message.member.hasPermission("BAN_MEMBERS")) {
+
+            if (!message.mentions.users.first()) return;
+
+            utilisateur = message.mentions.users.first().id
+
+            if (bdd["warn"][utilisateur] == 2) {
+                message.channel.send(utilisateur + " a été ban suite aux 3 warns")
+                delete bdd["warn"][utilisateur]
+                message.guild.members.ban(utilisateur)
+                Savebdd
             }
-            else{
-                let number = parseInt(args[1]);
-                
-                if(isNaN(number)){
-                    message.reply("Nombre de message non ou mal défini.");
+            else {
+                if (!bdd["warn"][utilisateur]) {
+                    bdd[message.guild.id]["warn"][utilisateur] = 1
+                    Savebdd();
+                    message.channel.send(" tu as à présent " + bdd["warn"][utilisateur] + " avertissement.")
                 }
-                else{
-                    message.channel.bulkDelete(number).then(messages =>{
-                        console.log("clear de" + messages.size + " message reussi ! ");
-                    }).catch(err => {
-                        console.log("Erreur de clear : " + err);
-                    });
+                else {
+                    bdd[message.guild.id]["warn"][utilisateur]++
+                    Savebdd();
+                    message.channel.send("Tu as à présent" + bdd["warn"][utilisateur] + " avertissements.")
                 }
             }
+        }
+        else {
+            message.channel.send("Vous n'avez pas les permissions requise pour faire cette action.")
+        }
+    }
+    if (message.content.startsWith(`${prefix}unwarn`)) {
+        if (message.member.hasPermission("BAN_MEMBERS")) {
+
+            if (!message.mentions.users.first()) return;
+            utilisateur = message.mentions.users.first().id
+            delete bdd[message.guild.id]["warn"][utilisateur]
+            Savebdd();
+            message.channel.send("Tu n'as plus d'avertissement à présent.")
+
         }
     }
 });
 
+// Commande de Statistique //
 Client.on("message", message => {
-    if(message.author.bot) return;
-    if(message.content.startsWith(prefix + "help")){
+    if (message.content.startsWith(`${prefix}stats`)) {
+        let onlines = message.guild.members.cache.filter(({ presence }) => presence.status !== 'offline').size;
+        let totalmembers = message.guild.members.cache.size;
+        let totalservers = Client.guilds.cache.size;
+        let totalbots = message.guild.members.cache.filter(member => member.user.bot).size;
 
-        var embed = new Discord.MessageEmbed()
-            .setColor("#46b1ec")
-            .setTitle("** Deku **")
-            .setDescription("** Voici le menu d'aide que je peux t'apporter **\n\n ** Commande de modération **\n\n **+clear** : pour supprimer un certain nombre de message (max: 99 message).\n\n **+kick** : pour kick un membre du serveur.\n\n **+ban** : pour bannir un membre du serveur.\n\n **+mute** : pour rendre muet un membre du serveur.\n\n **+unmute ** : pour permattre à un membre muet de pourvoir à nouveau parler. \n\n **+tempmute** : rend muet un membre pendant un certain temps (en minute). \n\n ** Commande un peu plus fun** \n\n ** +stat ** : donne ton id. \n\n **+ping** : repond pong. \n\n **+avatar** : met ton avatar en plus grand. \n\n ** +server** : donne des renseignement sur le serveur.\n ")
-            .setThumbnail("https://i.pinimg.com/originals/df/fb/58/dffb58f131703a3471248f4e164f1836.gif")
+        const monembed = new Discord.MessageEmbed()
+            .setColor('#0099ff')
+            .setTitle('Statistique')
+            .setURL('https://discord.com/api/oauth2/authorize?client_id=808410912582533140&permissions=8&scope=bot')
+            .setAuthor('Kuroko', 'https://i.pinimg.com/236x/ca/ad/13/caad13366c5fb8947cd0331c0087b0d7.jpg')
+            .setDescription('Voici les statistiques')
+            .setThumbnail('')
+            .addFields(
+                { name: 'Nombre de membres au total : ', value: totalmembers, inline: true },
+                { name: 'Membres connectés : ', value: onlines, inline: true },
+                { name: 'Nombre de serveurs auquel le bot appartient : ', value: totalservers, inline: true },
+                { name: 'Nombre de bots sur le serveur :', value: totalbots, inline: true },
+            )
+            .setImage('https://thumbs.gfycat.com/EminentCompleteHypacrosaurus-size_restricted.gif')
             .setTimestamp()
-        message.channel.send(embed);
+            .setFooter(`Appuie sur "Statistique" pour m'ajouter à ton serveur`, '');
+
+        message.channel.send(monembed);
 
     }
 });
+
+// Commande de ticket //
+Client.on("message", (message) => {
+    if (message.content.startsWith(`${prefix}ticket`))
+        if (message.member.hasPermission('ADMINISTRATOR')) {
+
+            const monembedticket = new Discord.MessageEmbed()
+                .setColor('#0099ff')
+                .setAuthor('Kuroko', 'https://i.pinimg.com/236x/ca/ad/13/caad13366c5fb8947cd0331c0087b0d7.jpg')
+                .setDescription('Appuie sur la réaction pour créer un ticket \n \ Le salon ticket sera normalemment tout en haut du serveur avec ton nom ')
+                .setThumbnail('')
+                .setTimestamp()
+                .setFooter('');
+
+            message.channel.send(monembedticket).then(m => m.react('🎟️')).then(message.delete({ timeout: 1000 }))
+
+            Client.on("messageReactionAdd", (reaction, user) => {
+                if (user.bot) return
+                if (reaction.emoji.name == "🎟️") {
+                    reaction.message.channel.send('Tu as réagi :🎟️ ').then(m => m.delete({ timeout: 1000 }));
+
+                    var channel_ticket = reaction.message.guild.channels
+
+                    channel_ticket.create(`ticket de ${user.username}`, {
+                        type: 'text',
+                        permissionOverwrites: [{
+                            id: reaction.message.guild.id,
+                            deny: ['SEND_MESSAGES'],
+                            allow: ['ADD_REACTIONS']
+                        }]
+
+                    }).then(channel_ticket => {
+
+                        const ticketlock = new Discord.MessageEmbed()
+                            .setColor('#0099ff')
+                            .setAuthor('Kuroko', 'https://i.pinimg.com/236x/ca/ad/13/caad13366c5fb8947cd0331c0087b0d7.jpg')
+                            .setDescription('Appuie sur la réaction pour créer un ticket \n \ Le salon ticket se fermera tout seul')
+                            .setThumbnail('')
+                            .setTimestamp()
+                            .setFooter('');
+
+                        channel_ticket.send(ticketlock).then(m => m.react('🔒'))
+                    })
+                }
+                Client.on("message", message => {
+                    if (message.content === prefix + "close") {
+                        if (!message.member.hasPermission("ADMINISTRATOR")) return;
+                        message.channel.delete();
+                    };
+                });
+            })
+
+        }
+        else {
+            message.channel.send("Vous n'avez pas la permission adminitrateur pour faire cette commande")
+        }
+});
+
+// Système d'anti-lien //
+Client.on('message', async message => {
+
+    let blacklisted = ['https://', 'http://', 'discord.gg',];
+
+    let foundInText = false;
+    for (var i in blacklisted) {
+        if (message.content.toLowerCase().includes(blacklisted[i].toLowerCase())) foundInText = true;
+    }
+
+    if (foundInText) {
+        message.delete();
+        message.channel.send(new Discord.MessageEmbed()
+            .setDescription(':no_entry: Les liens sont interdits dans ce serveur !!')
+            .setColor(`#ff0000`))
+    }
+});
+
+// Système d'anti-insulte // 
+Client.on('message', async message => {
+
+    let blacklisted = ["fdp", 'connard', 'ntm', 'va te faire', ' va te faire foutre', 'enculé', 'encule', 'nique ta race'];
+
+    let foundInText = false;
+    for (var i in blacklisted) {
+        if (message.content.toLowerCase().includes(blacklisted[i].toLowerCase())) foundInText = true;
+    }
+
+    if (foundInText) {
+        message.delete();
+        message.channel.send(new Discord.MessageEmbed()
+            .setDescription(':no_entry: Les insultes sont interdits dans ce serveur !!')
+            .setColor(`#ff0000`))
+    }
+});
+
+// Commande de ban //
+Client.on("message", message => {
+    if (message.author.bot) return;
+    if (message.channel.type == "dm") return;
+
+    if (message.member.hasPermission("ADMINISTRATOR"))
+        if (message.member.hasPermission("BAN_MEMBERS")) {
+            if (message.content.startsWith(prefix + "ban")) {
+                let mention = message.mentions.members.first();
+
+                if (mention == undefined) {
+                    message.reply("Membre non ou mal mentionné.");
+                }
+                else {
+                    if (mention.bannable) {
+                        mention.ban();
+                        message.channel.send(mention.displayName + " a été banni avec succès. ")
+                    }
+                    else {
+                        message.reply("Impossible de bannir ce membre. \n \ P.S : regarde si mon rôle est au-dessus des autres.");
+                    }
+                }
+            }
+        }
+});
+
+// Commande de kick //
+Client.on("message", message => {
+    if (message.author.bot) return;
+    if (message.channel.type == "dm") return;
+
+    if (message.member.hasPermission("ADMINISTRATOR"))
+        if (message.member.hasPermission("KICK_MEMBERS")) {
+            if (message.content.startsWith(prefix + "kick")) {
+                let mention = message.mentions.members.first();
+
+                if (mention == undefined) {
+                    message.reply("Membre non ou mal mentionné.");
+                }
+                else {
+                    if (mention.kickable) {
+                        mention.kick();
+                        message.channel.send(mention.displayName + " a été kick avec succès.");
+                    }
+                    else {
+                        message.reply("Impossible de kick ce membre. \n \ P.S : regarde si mon rôle est au-dessus des autres.");
+                    }
+                }
+            }
+        }
+});
+
+// Commande de Mute, unmute & tempmute //
+
+Client.on("guildCreate", guild => {
+    bdd[guild.id] = {}
+    Savebdd()
+});
+
+function Savebdd() {
+    fs.writeFile("./bdd.json", JSON.stringify(bdd, null, 4), (err) => {
+        if (err) message.channel.send("une erreur est survenue.");
+    });
+}
+
+Savebdd();
 
 Client.login(process.env.TOKEN)
