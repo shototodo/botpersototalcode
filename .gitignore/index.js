@@ -181,7 +181,7 @@ Client.on("message", (message) => {
 // Système d'anti-lien //
 Client.on('message', async message => {
 
-    let blacklisted = ['https://', 'http://', 'discord.gg',];
+    let blacklisted = ['discord.gg'];
 
     let foundInText = false;
     for (var i in blacklisted) {
