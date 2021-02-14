@@ -14,12 +14,6 @@ Client.on("ready", async () => {
     }, 100);
 });
 
-// Bienvenue // BDD ATTENTION
-Client.on("guildMemberAdd", member => {
-    Client.channels.cache.get('808685109652750406').send(`Bienvenue à ${member.user.username} sur ${member.guild} !`)
-    member.roles.add('808669926717915166');
-});
-
 // Commande  de clear //
 Client.on("message", message => {
 
