@@ -10,7 +10,7 @@ Client.on("ready", async () => {
     console.log("Le bot est ON")
     Client.user.setStatus("dnd")
     setTimeout(() => {
-        Client.user.setActivity("Regarde " + Client.guilds.cache.size + " serveurs");
+        Client.user.setActivity("Regarde Akita" );
     }, 100);
 });
 
@@ -53,7 +53,7 @@ Client.on("message", message => {
 
         var embed = new Discord.MessageEmbed()
             .setColor("#46b1ec")
-            .setTitle("** Dawn **")
+            .setTitle(message.guild)
             .setDescription("** Voici le menu d'aide que je peux t'apporter **\n\n ** Commande de modération **\n\n **+clear** : pour supprimer un certain nombre de message (max: 99 message).\n\n **+kick** : pour kick un membre du serveur.\n\n **+ban** : pour bannir un membre du serveur.\n\n **+mute** : pour rendre muet un membre du serveur.\n\n **+unmute ** : pour permattre à un membre muet de pourvoir à nouveau parler. \n\n **+tempmute** : rend muet un membre pendant un certain temps (en minute). \n\n ** Commande un peu plus fun** \n\n ** +stat ** : donne ton id. \n\n **+ping** : repond pong. \n\n **+avatar** : met ton avatar en plus grand. \n\n ** +server** : donne des renseignement sur le serveur.\n ")
             .setTimestamp()
         message.channel.send(embed);
@@ -63,7 +63,7 @@ Client.on("message", message => {
 
 // Bienvenue // Dawn
 Client.on("guildMemberAdd", member => {
-    Client.channels.cache.get('839207979864686613').send(`Bienvenue à ${member.user.username} sur ${member.guild} !\n Nous sommes ${member.guild.memberCount} membres `)
+    Client.channels.cache.get('877721546175697010').send(`** Bienvenue à ${member.user.username} sur ${member.guild} !\n Nous sommes ${member.guild.memberCount} membres **`)
 });
 
 // Commande de Statistique // Dawn 
@@ -77,7 +77,7 @@ Client.on("message", message => {
         const monembed = new Discord.MessageEmbed()
             .setColor('#0099ff')
             .setTitle('Statistique')
-            .setAuthor('Dawn',)
+            .setAuthor(`${message.guild}`)
             .setDescription('Voici les statistiques')
             .setThumbnail('')
             .addFields(
@@ -167,105 +167,11 @@ Client.on("message", message => {
     }
 });
 
-// Commande de ticket //
-Client.on("message", (message) => {
-    if (message.content.startsWith(`${prefix}ticket`))
-        if (message.member.hasPermission('ADMINISTRATOR')) {
-
-            const monembedticket = new Discord.MessageEmbed()
-                .setColor('#0099ff')
-                .setAuthor('Kuroko', 'https://i.pinimg.com/236x/ca/ad/13/caad13366c5fb8947cd0331c0087b0d7.jpg')
-                .setDescription('Appuie sur la réaction pour créer un ticket \n \ Le salon ticket sera normalemment tout en haut du serveur avec ton nom ')
-                .setThumbnail('')
-                .setTimestamp()
-                .setFooter('');
-
-            message.channel.send(monembedticket).then(m => m.react('🎟️')).then(message.delete({ timeout: 1000 }))
-
-            Client.on("messageReactionAdd", (reaction, user) => {
-                if (user.bot) return
-                if (reaction.emoji.name == "🎟️") {
-                    reaction.message.channel.send('Tu as réagi :🎟️ ').then(m => m.delete({ timeout: 1000 }));
-
-                    var channel_ticket = reaction.message.guild.channels
-
-                    channel_ticket.create(`ticket de ${user.username}`, {
-                        type: 'text',
-                        permissionOverwrites: [{
-                            id: reaction.message.guild.id,
-                            deny: ['SEND_MESSAGES'],
-                            allow: ['ADD_REACTIONS']
-                        }]
-
-                    }).then(channel_ticket => {
-
-                        const ticketlock = new Discord.MessageEmbed()
-                            .setColor('#0099ff')
-                            .setAuthor('Kuroko', 'https://i.pinimg.com/236x/ca/ad/13/caad13366c5fb8947cd0331c0087b0d7.jpg')
-                            .setDescription('Appuie sur la réaction pour créer un ticket \n \ Le salon ticket se fermera tout seul')
-                            .setThumbnail('')
-                            .setTimestamp()
-                            .setFooter('');
-
-                        channel_ticket.send(ticketlock).then(m => m.react('🔒'))
-                    })
-                }
-                Client.on("message", message => {
-                    if (message.content === prefix + "close") {
-                        if (!message.member.hasPermission("ADMINISTRATOR")) return;
-                        message.channel.delete();
-                    };
-                });
-            })
-
-        }
-        else {
-            message.channel.send("Vous n'avez pas la permission adminitrateur pour faire cette commande")
-        }
-});
-
 // Commande de Mute, unmute & tempmute, ban // 
 Client.on ("message", message => {
     if(message.author.bot) return;
     if(message.channel.type == "dm")return;
 
-    if(message.member.hasPermission("BAN_MEMBERS")){
-        if (message.content.startsWith(prefix + "ban")){
-            let mention = message.mentions.members.first();
-
-            if(mention == undefined){
-                message.reply("Membre non ou mal mentionné.");
-            }
-            else {
-                if(mention.bannable){
-                    mention.ban();
-                    message.channel.send(mention.displayName + " a été banni avec succès. ")
-                }
-                else{
-                    message.reply("Impossible de bannir ce membre.");
-                }
-            }
-        }
-    }
-
-    if(message.member.hasPermission("KICK_MEMBERS")){
-        if (message.content.startsWith(prefix + "kick")){
-            let mention = message.mentions.members.first();
-
-            if(mention == undefined){
-                message.reply("Membre non ou mal mentionné.");
-            }
-            else {
-                if (mention.kickable){
-                    mention.kick();
-                    message.channel.send(mention.displayName + " a été kick avec succès.");
-                }
-                else {
-                    message.reply("Impossible de kick ce membre.");
-                }
-            }
-        }
-    }
     if(message.member.hasPermission("MANAGE_MESSAGES")){
         if (message.content.startsWith(prefix + "mute")){
             let mention = message.mentions.members.first();
@@ -274,7 +180,7 @@ Client.on ("message", message => {
                 message.reply("Membre non ou mal mentionné.");
             }
             else{
-                mention.roles.add("839506361909248000");
+                mention.roles.add("878279164636041256");
                 message.reply(mention.displayName + " mute avec succès.");
             }
         }
@@ -286,7 +192,7 @@ Client.on ("message", message => {
                 message.reply("Membre non ou mal mentionné.");
             }
             else{
-                mention.roles.remove("839506361909248000");
+                mention.roles.remove("878279164636041256");
                 message.reply(mention.displayName + " unmute avec succès.");
             }
         }
@@ -300,9 +206,9 @@ Client.on ("message", message => {
             else{
                 let args = message.content.split(" ");
 
-                mention.roles.add("839506361909248000");
+                mention.roles.add("878279164636041256");
                 setTimeout(function() {
-                    mention.roles.remove("839506361909248000");
+                    mention.roles.remove("878279164636041256");
                     message.channel.send("<@" + mention.id + "> Tu peux désormais de nouveau parler !");
                 }, args[2] * 1000 * 60)
             }
