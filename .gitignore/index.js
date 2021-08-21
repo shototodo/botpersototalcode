@@ -31,7 +31,7 @@ Client.on("message", message => {
 
 // Bienvenue // Dawn
 Client.on("guildMemberAdd", member => {
-    Client.channels.cache.get('877721546175697010').send(`** Bienvenue à ${member.user.username} sur ${member.guild} !\n Nous sommes ${member.guild.memberCount} membres **`)
+    Client.channels.cache.get('878637401092784148').send(`** Bienvenue à ${member.user.username} sur ${member.guild} !\n Nous sommes ${member.guild.memberCount} membres **`)
 });
 
 // Commande  de clear // Dawn protect
